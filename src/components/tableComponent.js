@@ -81,7 +81,7 @@ class TableComponent extends React.Component {
     }
   }
 
-  getRef = (node) => { this.element = node }
+  getRef = (node) => {this.element = node}
 
   showBtns = () => {
     if (this.state.cols.length > 1) {
@@ -115,13 +115,13 @@ class TableComponent extends React.Component {
 
   containerMover = (event) => {
     const mousePosition = {
-      x: event.clientX, // screenX 
-      y: event.clientY, // screenY
+      x: event.clientX,
+      y: event.clientY
     }
 
     this.setState({
-      leftMove: `${mousePosition.x + this.state.left}px`,
-      topMove: `${mousePosition.y + this.state.top}px`
+      leftMove: mousePosition.x + this.state.left,
+      topMove: mousePosition.y + this.state.top
     })
   }
   
@@ -162,8 +162,8 @@ class TableComponent extends React.Component {
               this.state.cols.map((col, index) => (
                 <div className='col'
                   style={{
-                    width: this.props.cellSize + `px`,
-                    height: this.props.cellSize + 'px'
+                    width: this.props.cellSize,
+                    height: this.props.cellSize
                   }}
                   key={col}
                   data-col-index={index}
@@ -176,9 +176,9 @@ class TableComponent extends React.Component {
           <button className='add add-col'
             onClick={this.addCol}
             style={{
-              width: this.props.cellSize + 2 + 'px',
-              height: this.props.cellSize + 2 + 'px',
-              right: -(this.props.cellSize + 3) + 'px'
+              width: this.props.cellSize + 2,
+              height: this.props.cellSize + 2,
+              right: -(this.props.cellSize + 3)
             }}
           >
             +
@@ -186,23 +186,23 @@ class TableComponent extends React.Component {
           <button className='add add-row'
             onClick={this.addRow}
             style={{
-              width: this.props.cellSize + 2 + 'px',
-              height: this.props.cellSize + 2 + 'px',
-              bottom: -(this.props.cellSize + 3) + 'px'
+              width: this.props.cellSize + 2,
+              height: this.props.cellSize + 2,
+              bottom: -(this.props.cellSize + 3)
             }}
           >
             +
           </button>
         </div>
-        <div className='delete-btns-container' style={{ top: -this.props.cellSize + 'px', left: -this.props.cellSize + 'px' }}>
+        <div className='delete-btns-container' style={{ top: -this.props.cellSize, left: -this.props.cellSize}}>
           <button className='delete del-col'
             onClick={this.delCol}
             style={{
               display: this.state.delColDisplay,
               transform: this.state.delColTransform,
-              width: this.props.cellSize + 2 + 'px',
-              height: this.props.cellSize + 2 + 'px',
-              left: this.props.cellSize + 'px'
+              width: this.props.cellSize + 2,
+              height: this.props.cellSize + 2,
+              left: this.props.cellSize
             }}
           >
             -
@@ -212,9 +212,9 @@ class TableComponent extends React.Component {
             style={{
               display: this.state.delRowDisplay,
               transform: this.state.delRowTransform,
-              width: this.props.cellSize + 2 + 'px',
-              height: this.props.cellSize + 2 + 'px',
-              top: this.props.cellSize + 'px'
+              width: this.props.cellSize + 2,
+              height: this.props.cellSize + 2,
+              top: this.props.cellSize
             }}
           >
             -
