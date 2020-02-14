@@ -25,6 +25,7 @@ class TableComponent extends React.Component {
 
   addCol = () => {
     let {cols} = this.state;
+
     cols.push(cols[cols.length - 1] + 1);
     this.setState(cols);
 
@@ -35,6 +36,7 @@ class TableComponent extends React.Component {
 
   addRow = () => {
     let {rows} = this.state;
+
     rows.push(rows[this.state.rows.length - 1] + 1);
     this.setState(rows);
 
@@ -45,12 +47,12 @@ class TableComponent extends React.Component {
 
   delCol = () => {
     let {cols, currentCol} = this.state;
+
     this.setState(cols.splice(currentCol, 1));
   
     if (cols.length === 1) {
       this.delColRef.current.style.display = 'none';
     }
-    
     if (currentCol === cols.length) {
       this.setState({ currentCol: currentCol - 1 });
     }
@@ -58,12 +60,12 @@ class TableComponent extends React.Component {
 
   delRow = () => {
     let {rows, currentRow} = this.state;
+
     this.setState(rows.splice(currentRow, 1));
 
     if (rows.length === 1) {
       this.delRowRef.current.style.display = 'none';
     }
-    
     if (currentRow === rows.length) {
       this.setState({ currentRow: currentRow - 1 });
     }
@@ -124,6 +126,7 @@ class TableComponent extends React.Component {
   render() {
     let {cellSize} = this.props;
     let {currentRow, currentCol, rows, cols} = this.state;
+    
     return (
       <div 
         className='container-table'
