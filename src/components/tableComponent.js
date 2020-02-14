@@ -9,9 +9,12 @@ class TableComponent extends React.Component {
       currentRow: 0,
       cols: [],
       rows: [],
-      delColTransform: 'none',
-      delRowTransform: 'none'
     }
+
+    this.containerRef = React.createRef();
+    this.delColRef = React.createRef();
+    this.delRowRef = React.createRef();
+
     for (let i = 0; i < this.props.initialHeight; i++) {
       this.state.rows.push(i);
     }
@@ -21,149 +24,126 @@ class TableComponent extends React.Component {
   }
 
   addCol = () => {
-    let cloneCols = this.state.cols.slice();
+    let {cols} = this.state;
+    cols.push(cols[cols.length - 1] + 1);
+    this.setState(cols);
 
-    cloneCols.push(cloneCols[cloneCols.length - 1] + 1);
-    this.setState({ cols: cloneCols });
-
-    if (cloneCols.length === 2) {
-      this.setState({ delColDisplay: 'block' });
+    if (cols.length === 2) {
+      this.delColRef.current.style.display = 'block';
     }
   }
 
   addRow = () => {
-    let cloneRows = this.state.rows.slice();
+    let {rows} = this.state;
+    rows.push(rows[this.state.rows.length - 1] + 1);
+    this.setState(rows);
 
-    cloneRows.push(cloneRows[cloneRows.length - 1] + 1);
-    this.setState({ rows: cloneRows });
-
-    if (cloneRows.length === 2) {
-      this.setState({ delRowDisplay: 'block' });
+    if (rows.length === 2) {
+      this.delRowRef.current.style.display = 'block';
     }
   }
 
   delCol = () => {
-    let cloneCols = this.state.cols.slice();
-
-    if (cloneCols.length > 1) {
-      cloneCols.splice(this.state.currentCol, 1);
-      this.setState({ cols: cloneCols });
-
-      if (cloneCols.length === 1) {
-        this.setState({ delColDisplay: 'none' });
-      }
+    let {cols, currentCol} = this.state;
+    this.setState(cols.splice(currentCol, 1));
+  
+    if (cols.length === 1) {
+      this.delColRef.current.style.display = 'none';
     }
-
-    if (this.state.currentCol === cloneCols.length) {
-      this.setState({
-        currentCol: this.state.currentCol - 1,
-        delColTransform: `translateX(${(this.state.currentCol - 1) * this.props.cellSize + 2}px)` 
-      })
+    
+    if (currentCol === cols.length) {
+      this.setState({ currentCol: currentCol - 1 });
     }
   }
 
   delRow = () => {
-    let cloneRows = this.state.rows.slice();
+    let {rows, currentRow} = this.state;
+    this.setState(rows.splice(currentRow, 1));
 
-    if (cloneRows.length > 1) {
-      cloneRows.splice(this.state.currentRow, 1);
-      this.setState({ rows: cloneRows });
-    }
-    if (cloneRows.length === 1) {
-      this.setState({ delRowDisplay: 'none' });
+    if (rows.length === 1) {
+      this.delRowRef.current.style.display = 'none';
     }
     
-    if (this.state.currentRow === cloneRows.length) {
-      this.setState({
-        currentRow: this.state.currentRow - 1,
-        delRowTransform: `translateY(${(this.state.currentRow - 1) * this.props.cellSize + 2}px`
-      })
+    if (currentRow === rows.length) {
+      this.setState({ currentRow: currentRow - 1 });
     }
   }
 
-  getRef = (node) => {this.element = node}
-
   showBtns = () => {
-    if (this.state.cols.length > 1) {
-      this.setState({ delColDisplay: 'block' });
+    let {rows, cols} = this.state;
+    if (cols.length > 1) {
+      this.delColRef.current.style.display = 'block';
     }
 
-    if (this.state.rows.length > 1) {
-      this.setState({ delRowDisplay: 'block' });
+    if (rows.length > 1) {
+      this.delRowRef.current.style.display = 'block';
     }
   };
 
   hideBtns = () => {
-    this.setState({
-      delColDisplay: 'none',
-      delRowDisplay: 'none'
-    })
+    this.delRowRef.current.style.display = 'none';
+    this.delColRef.current.style.display = 'none';
   }
 
   delButtonMover = (event) => {
     if (event.target.classList.contains('col')) {
-      this.setState({ 
-        currentCol: +event.target.dataset.colIndex,
-        currentRow: +event.target.parentNode.dataset.rowIndex
-      })
+      if (+event.target.dataset.colIndex !== this.state.currentCol) {
+        this.setState({currentCol: +event.target.dataset.colIndex});
+      }
+      if (+event.target.parentNode.dataset.rowIndex !== this.state.currentRow) {
+        this.setState({currentRow: +event.target.parentNode.dataset.rowIndex});
+      }
     }
-    this.setState({
-      delColTransform: `translateX(${this.state.currentCol * (this.props.cellSize + 2) + 1}px)`,
-      delRowTransform: `translateY(${this.state.currentRow * (this.props.cellSize + 2) + 1}px)`
-    })
   }
 
   containerMover = (event) => {
+    const container = this.containerRef.current;
     const mousePosition = {
       x: event.clientX,
       y: event.clientY
     }
-
-    this.setState({
-      leftMove: mousePosition.x + this.state.left,
-      topMove: mousePosition.y + this.state.top
-    })
+    container.style.left = `${mousePosition.x + this.state.left}px`;
+    container.style.top = `${mousePosition.y + this.state.top}px`;
   }
   
   containerAddListener = (event) => {
     const containerTableRect = event.currentTarget.getBoundingClientRect();
-    const eventReact = event.target.getBoundingClientRect();
+    const eventRect = event.target.getBoundingClientRect();
 
     this.setState({
-      left: containerTableRect.left - eventReact.left - event.nativeEvent.offsetX,
-      top: containerTableRect.top - eventReact.top - event.nativeEvent.offsetY
+      left: containerTableRect.left - eventRect.left - event.nativeEvent.offsetX,
+      top: containerTableRect.top - eventRect.top - event.nativeEvent.offsetY
     })
-    // window.addEventListener('mousemove', this.containerMover);
-    this.element.addEventListener('mousemove', this.containerMover);
+    window.addEventListener('mousemove', this.containerMover);
   }
 
   containerRemoveListener = () => {
-    // window.removeEventListener('mousemove', this.containerMover);
-    this.element.removeEventListener('mousemove', this.containerMover);
+    window.removeEventListener('mousemove', this.containerMover);
   }
 
   render() {
+    let {cellSize} = this.props;
+    let {currentRow, currentCol, rows, cols} = this.state;
     return (
       <div 
         className='container-table'
-        ref={this.getRef}
-        onMouseMove={this.delButtonMover}
+        ref={this.containerRef}
         onMouseEnter={this.showBtns}
         onMouseLeave={this.hideBtns}
-        style = {{top: this.state.topMove, left: this.state.leftMove}}
       >
         <div 
           className='boxes-container'
+          onMouseMove={this.delButtonMover}
           onMouseDown={this.containerAddListener}
           onMouseUp={this.containerRemoveListener}
         >
-          {this.state.rows.map((row, index) => (
+          {rows.map((row, index) => (
             <div className='row' key={row} data-row-index={index}>{
-              this.state.cols.map((col, index) => (
+              cols.map((col, index) => (
                 <div className='col'
                   style={{
-                    width: this.props.cellSize,
-                    height: this.props.cellSize
+                    width: cellSize,
+                    height: cellSize
                   }}
                   key={col}
                   data-col-index={index}
@@ -176,9 +156,9 @@ class TableComponent extends React.Component {
           <button className='add add-col'
             onClick={this.addCol}
             style={{
-              width: this.props.cellSize + 2,
-              height: this.props.cellSize + 2,
-              right: -(this.props.cellSize + 3)
+              width: cellSize + 2,
+              height: cellSize + 2,
+              right: -(cellSize + 3)
             }}
           >
             +
@@ -186,35 +166,40 @@ class TableComponent extends React.Component {
           <button className='add add-row'
             onClick={this.addRow}
             style={{
-              width: this.props.cellSize + 2,
-              height: this.props.cellSize + 2,
-              bottom: -(this.props.cellSize + 3)
+              width: cellSize + 2,
+              height: cellSize + 2,
+              bottom: -(cellSize + 3)
             }}
           >
             +
           </button>
         </div>
-        <div className='delete-btns-container' style={{ top: -this.props.cellSize, left: -this.props.cellSize}}>
-          <button className='delete del-col'
+        <div className='delete-btns-container' style={{ top: -cellSize, left: -cellSize}}>
+          <button 
+            className='delete del-col'
+            ref={this.delColRef}
             onClick={this.delCol}
             style={{
-              display: this.state.delColDisplay,
-              transform: this.state.delColTransform,
-              width: this.props.cellSize + 2,
-              height: this.props.cellSize + 2,
-              left: this.props.cellSize
+              transform: (currentCol === cols.length
+                ? `translateX(${(currentCol - 1) * cellSize + 2}px)`
+                : `translateX(${currentCol * (cellSize + 2) + 1}px)`),
+              width: cellSize + 2,
+              height: cellSize + 2,
+              left: cellSize
             }}
           >
             -
           </button>
           <button className='delete del-row'
             onClick={this.delRow}
+            ref={this.delRowRef}
             style={{
-              display: this.state.delRowDisplay,
-              transform: this.state.delRowTransform,
-              width: this.props.cellSize + 2,
-              height: this.props.cellSize + 2,
-              top: this.props.cellSize
+              transform: (currentRow === rows.length
+                ? `translateY(${(currentRow - 1) * cellSize + 2}px)`
+                : `translateY(${currentRow * (cellSize + 2) + 1}px)`),
+              width: cellSize + 2,
+              height: cellSize + 2,
+              top: cellSize
             }}
           >
             -
