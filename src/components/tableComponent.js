@@ -48,7 +48,7 @@ class TableComponent extends React.Component {
   delCol = () => {
     let {cols, currentCol} = this.state;
 
-    this.setState(cols.splice(currentCol, 1));
+    if (cols.length > 1) {this.setState(cols.splice(currentCol, 1)) }
   
     if (cols.length === 1) {
       this.delColRef.current.style.display = 'none';
@@ -61,7 +61,7 @@ class TableComponent extends React.Component {
   delRow = () => {
     let {rows, currentRow} = this.state;
 
-    this.setState(rows.splice(currentRow, 1));
+    if (rows.length > 1) { this.setState(rows.splice(currentRow, 1)) }
 
     if (rows.length === 1) {
       this.delRowRef.current.style.display = 'none';
