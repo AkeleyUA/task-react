@@ -4,7 +4,7 @@ import './App.css';
 
 function App() {
   return (
-    <TableComponent initialWidth={4} initialHeight={4} cellSize={50}/>
+    <TableComponent initialWidth={4} initialHeight={4} cellSize={50} />
   );
 }
 

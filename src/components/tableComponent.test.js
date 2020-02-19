@@ -1,5 +1,5 @@
 import React from 'react';
-import Enzyme, { shallow, mount, render } from 'enzyme';
+import Enzyme, { shallow, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import TableComponent from './tableComponent';
 
@@ -62,7 +62,7 @@ describe('<TableComponent />', () => {
   });
 
   it('should not delete last row', () => {
-    const wrapper = mount(<TableComponent initialHeight={1}/>);
+    const wrapper = mount(<TableComponent initialHeight={1} />);
     const rowDelBtn = wrapper.find('.del-row');
     expect(wrapper.find('.row')).toHaveLength(1);
     rowDelBtn.simulate('click');
@@ -70,7 +70,7 @@ describe('<TableComponent />', () => {
   });
 
   it('should not delete lsat col', () => {
-    const wrapper = mount(<TableComponent initialWidth={1}/>);
+    const wrapper = mount(<TableComponent initialWidth={1} />);
     const colDelBtn = wrapper.find('.del-col');
     wrapper.find('.row').forEach((row) => {
       expect(row.find('.col')).toHaveLength(1);
